@@ -8,9 +8,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 @Sharable
-public class EchoServerHandler extends ChannelHandlerAdapter{
+public class EchoServerHandler extends ChannelInboundHandlerAdapter{
     private int counter = 0;
-    //@Override
+    @Override
     public void channelRead(ChannelHandlerContext ctx,Object msg){
         String body = (String)msg;
         System.out.println("This is " + ++counter + " times receive client :[" + body +"]");
@@ -19,7 +19,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter{
         ctx.writeAndFlush(echo);
     }
 
-    //@Override
+    @Override
     public void channelReadComplete(ChannelHandlerContext ctx){
         ctx.flush();
     }
