@@ -14,6 +14,10 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public final class EchoServer{
     static final boolean SSL = System.getProperty("ssl") != null;
@@ -48,6 +52,9 @@ public final class EchoServer{
                         if(sslCtx != null){
                             p.addLast(sslCtx.newHandler(ch.alloc()));
                         }
+                        ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
+                        p.addLast(new DelimiterBasedFrameDecoder(1024,delimiter));
+                        p.addLast(new StringDecoder());
                         p.addLast(new EchoServerHandler());
                     }
                 });

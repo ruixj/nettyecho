@@ -12,7 +12,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public final class EchoClient {
     static final boolean SSL = System.getProperty("ssl") != null;
@@ -46,6 +49,9 @@ public final class EchoClient {
                             p.addLast(sslCtx.newHandler(ch.alloc(),HOST,PORT));
 
                         }
+                        ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
+                        p.addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
+                        p.addLast(new StringDecoder());
                         p.addLast(new EchoClientHandler());
                     }
                 });
